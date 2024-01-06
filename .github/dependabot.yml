@@ -16,3 +16,11 @@ updates:
       all:
         patterns:
           - "*"
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      all:
+        patterns:
+          - "*"

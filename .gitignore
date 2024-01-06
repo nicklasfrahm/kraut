@@ -1,4 +1,3 @@
-
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -24,3 +23,9 @@ Dockerfile.cross
 *.swp
 *.swo
 *~
+
+# Python virtualenv
+.venv/
+
+# Bundled documentation.
+public/

@@ -1,0 +1,39 @@
+site_name: Kraut
+site_dir: public
+site_url: https://kraut.nicklasfrahm.dev/
+repo_url: https://github.com/nicklasfrahm/kraut
+repo_name: nicklasfrahm/kraut
+edit_uri: edit/main/docs/
+strict: true
+use_directory_urls: false
+theme:
+  name: material
+  palette:
+    primary: indigo
+  features:
+  - navigation.instant
+  - navigation.tracking
+  - navigation.tabs
+  - navigation.tabs.sticky
+  - navigation.expand
+  - navigation.top
+  - content.code.copy
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+nav:
+  - Overview: index.md
+  - Management:
+      - Overview: management.md
+      - SSH: management/ssh.md
+  - Networking:
+      - Overview: networking.md
+      - Interfaces: networking/interfaces.md
+      - Networks: networking/networks.md
+  - Development:
+      - Quickstart: development/quickstart.md

@@ -1,0 +1,72 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/**
+      - mkdocs.yml
+      - requirements.txt
+      - .github/workflows/docs.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - docs/**
+      - mkdocs.yml
+      - requirements.txt
+      - .github/workflows/docs.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Configure Python runtime
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build documentation
+        run: mkdocs build
+
+      - name: Upload static bundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: docs
+          path: public
+
+  deploy:
+    name: Deploy
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - name: Download static bundle
+        uses: actions/download-artifact@v3
+        with:
+          name: docs
+          path: public
+
+      - name: Configure documentation domain
+        run: echo $DOMAIN > public/CNAME
+        env:
+          DOMAIN: ${{ secrets.DOMAIN }}
+
+      - name: Deploy to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v3
+        with:
+          target_branch: docs
+          build_dir: public
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
