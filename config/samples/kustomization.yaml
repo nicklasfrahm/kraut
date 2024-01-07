@@ -1,0 +1,5 @@
+resources:
+# alfa
+- management_v1alpha1_host_alfa.yaml
+- core_v1_secret_alfa.yaml
+#+kubebuilder:scaffold:manifestskustomizesamples

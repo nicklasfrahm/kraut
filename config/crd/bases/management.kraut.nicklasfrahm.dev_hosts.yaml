@@ -1,0 +1,125 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.12.0
+  name: hosts.management.kraut.nicklasfrahm.dev
+spec:
+  group: management.kraut.nicklasfrahm.dev
+  names:
+    categories:
+    - mgmt
+    - management
+    kind: Host
+    listKind: HostList
+    plural: hosts
+    shortNames:
+    - host
+    singular: host
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.protocol
+      name: Protocol
+      type: string
+    - jsonPath: .status.os.name
+      name: OS-Name
+      type: string
+    - jsonPath: .status.os.version
+      name: OS-Version
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Host is the Schema for the hosts API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: HostSpec defines the desired state of Host
+            properties:
+              host:
+                description: Host is the host to connect to.
+                type: string
+              port:
+                description: Port is the port to connect to.
+                type: integer
+              protocol:
+                description: Protocol is the protocol used to connect to the host.
+                  Currently only supports `SSH`.
+                enum:
+                - SSH
+                type: string
+              secretRef:
+                description: SecretRef is the reference to a secret containing sensitive
+                  connection credentials.
+                properties:
+                  name:
+                    description: name is unique within a namespace to reference a
+                      secret resource.
+                    type: string
+                  namespace:
+                    description: namespace defines the space within which the secret
+                      name must be unique.
+                    type: string
+                type: object
+                x-kubernetes-map-type: atomic
+              ssh:
+                description: SSH contains additional SSH connection options.
+                properties:
+                  fingerprint:
+                    description: Fingerprint is the SSH host key fingerprint in the
+                      format `{algorithm}:{hash}`.
+                    type: string
+                  proxyFingerprint:
+                    description: ProxyFingerprint is the SSH proxy host key fingerprint
+                      in the format `{algorithm}:{hash}`.
+                    type: string
+                  proxyHost:
+                    description: ProxyHost is the SSH proxy host to connect to.
+                    type: string
+                  proxyPort:
+                    description: ProxyPort is the SSH proxy port to connect to.
+                    type: integer
+                  proxyUser:
+                    description: ProxyUser is the SSH proxy user to connect as.
+                    type: string
+                  user:
+                    description: User is the SSH user to connect as.
+                    type: string
+                type: object
+            required:
+            - protocol
+            - secretRef
+            type: object
+          status:
+            description: HostStatus defines the observed state of Host
+            properties:
+              os:
+                description: OS contains information about the discovered operating
+                  system.
+                properties:
+                  name:
+                    description: Name is the name of the operating system.
+                    type: string
+                  version:
+                    description: Version is the version of the operating system.
+                    type: string
+                type: object
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

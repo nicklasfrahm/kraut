@@ -29,3 +29,6 @@ Dockerfile.cross
 
 # Bundled documentation.
 public/
+
+# Ignore sample secrets.
+config/samples/*secret*.yaml

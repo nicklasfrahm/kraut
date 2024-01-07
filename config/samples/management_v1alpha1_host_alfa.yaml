@@ -1,0 +1,23 @@
+apiVersion: management.kraut.nicklasfrahm.dev/v1alpha1
+kind: Host
+metadata:
+  labels:
+    app.kubernetes.io/instance: alfa
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: kraut
+  name: alfa
+spec:
+  # (required) The protocol to use for the connection.
+  protocol: SSH
+  # (required) The network address of the appliance.
+  host: alfa.nicklasfrahm.dev
+  # Configure options specific to the SSH protocol.
+  ssh:
+    # (optional) Configure the host key fingerprint to prevent PitM attacks.
+    fingerprint: SHA256:49mCNLbbKtVrKP6nxG+JPgeLZvHpCfY+dKtkuJvWq0g
+    # (optional) Specify a user. Defaults to root.
+    user: nicklasfrahm
+  # (required) Configure the credentials.
+  secretRef:
+    # (required) The name of the secret that contains the credentials.
+    name: host-alfa

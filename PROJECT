@@ -11,4 +11,14 @@ plugins:
   scorecard.sdk.operatorframework.io/v2: {}
 projectName: kraut
 repo: github.com/nicklasfrahm/kraut
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kraut.nicklasfrahm.dev
+  group: management
+  kind: Host
+  path: github.com/nicklasfrahm/kraut/api/management/v1alpha1
+  version: v1alpha1
 version: "3"

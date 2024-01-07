@@ -1,0 +1,47 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - management.kraut.nicklasfrahm.dev
+  resources:
+  - hosts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - management.kraut.nicklasfrahm.dev
+  resources:
+  - hosts/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - management.kraut.nicklasfrahm.dev
+  resources:
+  - hosts/status
+  verbs:
+  - get
+  - patch
+  - update

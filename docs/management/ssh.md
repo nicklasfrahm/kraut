@@ -64,7 +64,7 @@ stringData:
 Below, you may find a simple example where the controller will connect directly to the host.
 
 ```yaml title="alfa.yaml"
-TODO: Add YAML example.
+--8<-- "config/samples/management_v1alpha1_host_alfa.yaml"
 ```
 
 In more complex setup, you many need to use a jump host to connect to your host. This can be done as well.
