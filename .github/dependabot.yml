@@ -5,15 +5,17 @@ updates:
     schedule:
       interval: "daily"
     groups:
-      all:
+      actions:
         patterns:
           - "*"
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "fix(deps)"
     groups:
-      all:
+      gomodules:
         patterns:
           - "*"
   - package-ecosystem: "pip"
@@ -21,6 +23,6 @@ updates:
     schedule:
       interval: "daily"
     groups:
-      all:
+      pip:
         patterns:
           - "*"
