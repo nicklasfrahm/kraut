@@ -1,5 +1,7 @@
 resources:
 # alfa
+- core_v1_secret_kraut-host-ssh.yaml
 - management_v1alpha1_host_alfa.yaml
-- core_v1_secret_alfa.yaml
+- management_v1alpha1_host_november.yaml
+- firewall_v1alpha1_firewall_internet.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples
