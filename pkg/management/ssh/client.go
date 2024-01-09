@@ -3,6 +3,7 @@ package ssh
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"gopkg.in/ini.v1"
 	corev1 "k8s.io/api/core/v1"
@@ -107,13 +108,13 @@ func (c *Client) OS() *mgmtv1alpha1.OSInfo {
 func (c *Client) probeOS() (*mgmtv1alpha1.OSInfo, error) {
 	osReleaseFile := "/etc/os-release"
 
-	session, err := c.ssh.SSH.NewSession()
+	osSession, err := c.ssh.SSH.NewSession()
 	if err != nil {
 		return nil, err
 	}
-	defer session.Close()
+	defer osSession.Close()
 
-	osReleaseRaw, err := session.Output(fmt.Sprintf("cat %s", osReleaseFile))
+	osReleaseRaw, err := osSession.Output(fmt.Sprintf("cat %s", osReleaseFile))
 	if err != nil {
 		return nil, err
 	}
@@ -136,9 +137,21 @@ func (c *Client) probeOS() (*mgmtv1alpha1.OSInfo, error) {
 		return nil, fmt.Errorf("failed to parse OS version from file: %s", osReleaseFile)
 	}
 
+	kernelSession, err := c.ssh.SSH.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer kernelSession.Close()
+
+	kernelVersionRaw, err := kernelSession.Output("uname -r")
+	if err != nil {
+		return nil, err
+	}
+
 	// Return "Unknown" if either key can't be parsed.
 	return &mgmtv1alpha1.OSInfo{
-		Name:    osNameKey.MustString("Unknown"),
-		Version: osVersionKey.MustString("Unknown"),
+		Name:          osNameKey.MustString("Unknown"),
+		Version:       mgmtv1alpha1.OSVersion(osVersionKey.MustString("Unknown")),
+		KernelVersion: strings.TrimSpace(string(kernelVersionRaw)),
 	}, nil
 }
