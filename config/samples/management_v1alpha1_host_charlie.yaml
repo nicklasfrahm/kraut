@@ -1,0 +1,23 @@
+apiVersion: management.kraut.nicklasfrahm.dev/v1alpha1
+kind: Host
+metadata:
+  labels:
+    app.kubernetes.io/instance: charlie
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: kraut
+  name: charlie
+spec:
+  # (required) The protocol to use for the connection.
+  protocol: SSH
+  # (required) The network address of the appliance.
+  host: 172.16.0.5
+  # Configure options specific to the SSH protocol.
+  ssh:
+    # (optional) Configure the host key fingerprint to prevent PitM attacks.
+    fingerprint: SHA256:TROaxvsmQBrWr7AMxGNIvy+ODjx8or2DtucZQRLOrj8
+    # (optional) Specify a user. Defaults to root.
+    user: nicklasfrahm
+  # (required) Configure the credentials.
+  secretRef:
+    # (required) The name of the secret that contains the credentials.
+    name: kraut-host-ssh
