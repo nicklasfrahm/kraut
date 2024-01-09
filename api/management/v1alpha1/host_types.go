@@ -81,6 +81,7 @@ type HostStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 //+kubebuilder:resource:categories={mgmt,management},shortName=host,path=hosts,singular=host
+//+kubebuilder:printcolumn:name="Host",type=string,JSONPath=`.spec.host`
 //+kubebuilder:printcolumn:name="Protocol",type=string,JSONPath=`.spec.protocol`
 //+kubebuilder:printcolumn:name="OS-Name",type=string,JSONPath=`.status.os.name`
 //+kubebuilder:printcolumn:name="OS-Version",type=string,JSONPath=`.status.os.version`

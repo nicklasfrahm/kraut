@@ -23,6 +23,9 @@ spec:
     - jsonPath: .spec.hostSelector.matchMetadata.name
       name: Host-Selector
       type: string
+    - jsonPath: .status.hostCount
+      name: Host-Count
+      type: integer
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -65,6 +68,11 @@ spec:
             type: object
           status:
             description: FirewallStatus defines the observed state of Firewall
+            properties:
+              hostCount:
+                description: HostCount is the number of hosts that are currently enforcing
+                  the firewall rules.
+                type: integer
             type: object
         type: object
     served: true

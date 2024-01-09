@@ -20,6 +20,9 @@ spec:
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
+    - jsonPath: .spec.host
+      name: Host
+      type: string
     - jsonPath: .spec.protocol
       name: Protocol
       type: string

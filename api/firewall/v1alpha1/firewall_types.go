@@ -71,14 +71,15 @@ type FirewallSpec struct {
 
 // FirewallStatus defines the observed state of Firewall
 type FirewallStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// HostCount is the number of hosts that are currently enforcing the firewall rules.
+	HostCount int `json:"hostCount,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 //+kubebuilder:resource:categories={fw,firewall},shortName=fw,path=firewalls,singular=firewall
 //+kubebuilder:printcolumn:name="Host-Selector",type=string,JSONPath=`.spec.hostSelector.matchMetadata.name`
+//+kubebuilder:printcolumn:name="Host-Count",type=integer,JSONPath=`.status.hostCount`
 
 // Firewall is the Schema for the firewalls API
 type Firewall struct {
