@@ -1,0 +1,4 @@
+You have successfully installed Kraut!
+
+Get started by creating a new Host. For more information,
+please refer to https://kraut.nicklasfrahm.dev.
