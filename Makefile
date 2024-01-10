@@ -137,17 +137,25 @@ docker-build: test ## Build docker image with the manager.
 docker-push: ## Push docker image with the manager.
 	$(CONTAINER_TOOL) push ${IMG}
 
+# Use a dummy version if we are not on the main branch
+# to avoid issues with invalid semver versions.
+HELM_VERSION = 0.0.0
+ifeq ($(shell git branch --show-current),main)
+HELM_VERSION = $(VERSION:v%=%)
+endif
+
 .PHONY: helm-build
 helm-build: ## Update and bundle the helm chart.
-	sed -i 's|version: .*|version: "$(VERSION:v%=%)"|' charts/kraut/Chart.yaml
+	sed -i 's|version: .*|version: "$(HELM_VERSION)"|' charts/kraut/Chart.yaml
 	sed -i 's|appVersion: .*|appVersion: "$(VERSION)"|' charts/kraut/Chart.yaml
-	sed -i 's|tag: .*|tag: "$(VERSION)"|' charts/kraut/values.yaml
+	sed -i 's|tag: .*|tag: "$(HELM_VERSION)"|' charts/kraut/values.yaml
+	helm lint charts/kraut
 	helm package charts/kraut
 
 .PHONY: helm-push
 helm-push: helm-build ## Push helm chart to an OCI registry.
-	helm push kraut-$(VERSION:v%=%).tgz oci://$(IMAGE_TAG_BASE:%/kraut=%)
-	rm kraut-$(VERSION:v%=%).tgz
+	helm push kraut-$(HELM_VERSION).tgz oci://$(IMAGE_TAG_BASE:%/kraut=%)
+	rm kraut-$(HELM_VERSION).tgz
 
 # PLATFORMS defines the target platforms for  the manager image be build to provide support to multiple
 # architectures. (i.e. make docker-buildx IMG=myregistry/mypoperator:0.0.1). To use this option you need to:

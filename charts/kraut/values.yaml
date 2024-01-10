@@ -12,7 +12,7 @@ operator:
     # (optional) Override this if you want to deploy a different
     # version of the operator. Be aware that this may break the
     # operator due to incompatibility with the CRDs.
-    tag: "v0.1.1"
+    tag: "0.0.0"
     # (optional) Avoid potential rate-limiting by default.
     pullPolicy: IfNotPresent
   # (optional) Select a specific set of nodes to deploy the operator.
