@@ -98,6 +98,7 @@ help: ## Display this help.
 .PHONY: manifests
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	cp config/crd/bases/* charts/kraut/crds
 
 .PHONY: generate
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
@@ -135,6 +136,18 @@ docker-build: test ## Build docker image with the manager.
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
 	$(CONTAINER_TOOL) push ${IMG}
+
+.PHONY: helm-build
+helm-build: ## Update and bundle the helm chart.
+	sed -i 's|version: .*|version: "$(VERSION:v%=%)"|' charts/kraut/Chart.yaml
+	sed -i 's|appVersion: .*|appVersion: "$(VERSION)"|' charts/kraut/Chart.yaml
+	sed -i 's|tag: .*|tag: "$(VERSION)"|' charts/kraut/values.yaml
+	helm package charts/kraut
+
+.PHONY: helm-push
+helm-push: helm-build ## Push helm chart to an OCI registry.
+	helm push kraut-$(VERSION:v%=%).tgz oci://$(IMAGE_TAG_BASE:%/kraut=%)
+	rm kraut-$(VERSION:v%=%).tgz
 
 # PLATFORMS defines the target platforms for  the manager image be build to provide support to multiple
 # architectures. (i.e. make docker-buildx IMG=myregistry/mypoperator:0.0.1). To use this option you need to:
@@ -283,7 +296,7 @@ endif
 BUNDLE_IMGS ?= $(BUNDLE_IMG)
 
 # The image tag given to the resulting catalog image (e.g. make catalog-build CATALOG_IMG=example.com/operator-catalog:v0.2.0).
-CATALOG_IMG ?= $(IMAGE_TAG_BASE)-catalog:v$(VERSION)
+CATALOG_IMG ?= $(IMAGE_TAG_BASE)-catalog:$(VERSION)
 
 # Set CATALOG_BASE_IMG to an existing catalog image tag to add $BUNDLE_IMGS to that image.
 ifneq ($(origin CATALOG_BASE_IMG), undefined)
