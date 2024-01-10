@@ -17,6 +17,9 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"strconv"
+	"strings"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -29,12 +32,54 @@ const (
 	ProtocolSSH Protocol = "SSH"
 )
 
+const (
+	// OSUbuntu is the Ubuntu operating system.
+	OSUbuntu = "Ubuntu"
+	// OSNXOS is the Cisco NX-OS operating system.
+	OSNXOS = "NX-OS"
+)
+
+// OSVersion describes the version of an operating system.
+type OSVersion string
+
+// Major returns the major version of the operating system.
+// Returns -1 if the version could not be parsed.
+func (v OSVersion) Major() int {
+	segments := strings.Split(strings.TrimPrefix(string(v), "v"), ".")
+
+	if len(segments) > 0 {
+		major, err := strconv.Atoi(segments[0])
+		if err == nil {
+			return major
+		}
+	}
+
+	return -1
+}
+
+// Minor returns the minor version of the operating system.
+// Returns -1 if the version could not be parsed.
+func (v OSVersion) Minor() int {
+	segments := strings.Split(string(v), ".")
+
+	if len(segments) > 1 {
+		minor, err := strconv.Atoi(segments[1])
+		if err == nil {
+			return minor
+		}
+	}
+
+	return -1
+}
+
 // OSInfo describes the operating system of a system.
 type OSInfo struct {
 	// Name is the name of the operating system.
 	Name string `json:"name,omitempty"`
 	// Version is the version of the operating system.
-	Version string `json:"version,omitempty"`
+	Version OSVersion `json:"version,omitempty"`
+	// KernelVersion is the kernel version of the operating system.
+	KernelVersion string `json:"kernelVersion,omitempty"`
 }
 
 // HostSpecSSHOptions defines the SSH connection options.
@@ -81,9 +126,11 @@ type HostStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 //+kubebuilder:resource:categories={mgmt,management},shortName=host,path=hosts,singular=host
+//+kubebuilder:printcolumn:name="Host",type=string,JSONPath=`.spec.host`
 //+kubebuilder:printcolumn:name="Protocol",type=string,JSONPath=`.spec.protocol`
 //+kubebuilder:printcolumn:name="OS-Name",type=string,JSONPath=`.status.os.name`
 //+kubebuilder:printcolumn:name="OS-Version",type=string,JSONPath=`.status.os.version`
+//+kubebuilder:printcolumn:name="Kernel-Version",type=string,JSONPath=`.status.os.kernelVersion`
 
 // Host is the Schema for the hosts API
 type Host struct {

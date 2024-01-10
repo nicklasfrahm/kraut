@@ -1,0 +1,18 @@
+apiVersion: firewall.kraut.nicklasfrahm.dev/v1alpha1
+kind: Firewall
+metadata:
+  labels:
+    app.kubernetes.io/instance: internet
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: kraut
+  name: internet
+spec:
+  # (required) Use Host CRs to manage firewalls.
+  hostSelector:
+    # (required) Match them based on their metadata. This supports regular
+    # expressions, but only for the name and the namespace fields.
+    matchMetadata:
+      # (required) Match the a single host by its name.
+      name: "^november$"
+      # (optional) Match the hosts by their namespace. Defaults to any namespace.
+      namespace: "default"

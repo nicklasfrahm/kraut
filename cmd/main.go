@@ -33,12 +33,16 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
+	firewallv1alpha1 "github.com/nicklasfrahm/kraut/api/firewall/v1alpha1"
 	managementv1alpha1 "github.com/nicklasfrahm/kraut/api/management/v1alpha1"
+	firewallcontroller "github.com/nicklasfrahm/kraut/internal/controller/firewall"
 	managementcontroller "github.com/nicklasfrahm/kraut/internal/controller/management"
 	//+kubebuilder:scaffold:imports
 )
 
 var (
+	// version is the version of the operator and injected at build time.
+	version  = "dev"
 	scheme   = runtime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
 )
@@ -47,6 +51,7 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(managementv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(firewallv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -100,6 +105,13 @@ func main() {
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Host")
+		os.Exit(1)
+	}
+	if err = (&firewallcontroller.FirewallReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Firewall")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

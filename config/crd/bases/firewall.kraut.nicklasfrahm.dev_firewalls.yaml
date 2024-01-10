@@ -1,0 +1,81 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.12.0
+  name: firewalls.firewall.kraut.nicklasfrahm.dev
+spec:
+  group: firewall.kraut.nicklasfrahm.dev
+  names:
+    categories:
+    - fw
+    - firewall
+    kind: Firewall
+    listKind: FirewallList
+    plural: firewalls
+    shortNames:
+    - fw
+    singular: firewall
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.hostSelector.matchMetadata.name
+      name: Host-Selector
+      type: string
+    - jsonPath: .status.hostCount
+      name: Host-Count
+      type: integer
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Firewall is the Schema for the firewalls API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: FirewallSpec defines the desired state of Firewall
+            properties:
+              hostSelector:
+                description: HostSelector defines the host selector for the host that
+                  will enforce the firewall rules.
+                properties:
+                  matchMetadata:
+                    description: MatchMetadata defines the metadata that must match
+                      for the host to be selected. Note that this supports regular
+                      expressions.
+                    properties:
+                      name:
+                        description: Name is the metadata name. Supports regular expressions.
+                        type: string
+                      namespace:
+                        description: Namespace is the metadata namespace. Supports
+                          regular expressions. If not specified, the namespace of
+                          the resource being matched is used.
+                        type: string
+                    type: object
+                type: object
+            type: object
+          status:
+            description: FirewallStatus defines the observed state of Firewall
+            properties:
+              hostCount:
+                description: HostCount is the number of hosts that are currently enforcing
+                  the firewall rules.
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

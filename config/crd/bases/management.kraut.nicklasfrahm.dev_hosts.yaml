@@ -20,6 +20,9 @@ spec:
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
+    - jsonPath: .spec.host
+      name: Host
+      type: string
     - jsonPath: .spec.protocol
       name: Protocol
       type: string
@@ -28,6 +31,9 @@ spec:
       type: string
     - jsonPath: .status.os.version
       name: OS-Version
+      type: string
+    - jsonPath: .status.os.kernelVersion
+      name: Kernel-Version
       type: string
     name: v1alpha1
     schema:
@@ -110,6 +116,10 @@ spec:
                 description: OS contains information about the discovered operating
                   system.
                 properties:
+                  kernelVersion:
+                    description: KernelVersion is the kernel version of the operating
+                      system.
+                    type: string
                   name:
                     description: Name is the name of the operating system.
                     type: string

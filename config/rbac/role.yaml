@@ -20,6 +20,32 @@ rules:
   - list
   - watch
 - apiGroups:
+  - firewall.kraut.nicklasfrahm.dev
+  resources:
+  - firewalls
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - firewall.kraut.nicklasfrahm.dev
+  resources:
+  - firewalls/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - firewall.kraut.nicklasfrahm.dev
+  resources:
+  - firewalls/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - management.kraut.nicklasfrahm.dev
   resources:
   - hosts
