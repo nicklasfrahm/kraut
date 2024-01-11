@@ -148,9 +148,13 @@ endif
 helm-build: ## Update and bundle the helm chart.
 	sed -i 's|version: .*|version: "$(HELM_VERSION)"|' charts/kraut/Chart.yaml
 	sed -i 's|appVersion: .*|appVersion: "$(VERSION)"|' charts/kraut/Chart.yaml
-	sed -i 's|tag: .*|tag: "$(HELM_VERSION)"|' charts/kraut/values.yaml
+	sed -i 's|tag: .*|tag: "$(VERSION)"|' charts/kraut/values.yaml
 	helm lint charts/kraut
 	helm package charts/kraut
+	git fetch --tags
+	sed -i 's|version: .*|version: "0.0.0"|' charts/kraut/Chart.yaml
+	sed -i 's|appVersion: .*|appVersion: "v0.0.0"|' charts/kraut/Chart.yaml
+	sed -i 's|tag: .*|tag: "v0.0.0"|' charts/kraut/values.yaml
 
 .PHONY: helm-push
 helm-push: helm-build ## Push helm chart to an OCI registry.
