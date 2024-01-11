@@ -4,4 +4,4 @@ description: kraut is an infrastructure orchestrator built on top of Kubernetes.
 icon: https://openmoji.org/data/color/svg/1F33F.svg
 type: application
 version: "0.0.0"
-appVersion: "v0.1.1-3-gb23096a-dirty"
+appVersion: "v0.0.0"
