@@ -5,6 +5,13 @@ global:
 
 # (optional) Configure the operator's deployment.
 operator:
+  # (optional) Configure the operator's logging.
+  logging:
+    # (optional) Configure the operator's log level.
+    level: "info"
+    # (optional) Configure the operator's log format.
+    # Valid values are "json" and "pretty".
+    format: "json"
   # (optional) Configure the operator's image.
   image:
     # (optional) Override this if you have a private registry.

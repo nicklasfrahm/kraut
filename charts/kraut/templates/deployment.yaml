@@ -40,7 +40,13 @@ spec:
           command:
           - /manager
           args:
-          - --leader-elect
+          - --leader-election
+          {{- if (eq .Values.operator.logging.format "json") }}
+          - --log-json
+          {{- end }}
+          {{- if .Values.operator.logging.level }}
+          - --log-level={{ .Values.operator.logging.level }}
+          {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
