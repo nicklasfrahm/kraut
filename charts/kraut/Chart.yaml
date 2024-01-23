@@ -1,7 +1,27 @@
 apiVersion: v2
-name: kraut
-description: kraut is an infrastructure orchestrator built on top of Kubernetes.
-icon: https://openmoji.org/data/color/svg/1F33F.svg
 type: application
+name: kraut
 version: "0.0.0"
 appVersion: "v0.0.0"
+icon: https://openmoji.org/data/color/svg/1F33F.svg
+description: An infrastructure orchestrator using Temporal and Kubernetes.
+keywords:
+  - "kubernetes"
+  - "baremetal"
+  - "orchestration"
+  - "infrastructure"
+home: https://kraut.nicklasfrahm.dev
+sources:
+  - https://github.com/nicklasfrahm/kraut
+maintainers:
+  - name: Nicklas Frahm
+    url: https://github.com/nicklasfrahm
+kubeVersion: ">=1.21.0-0"
+annotations:
+  artifacthub.io/operator: "true"
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://kraut.nicklasfrahm.dev
+    - name: Source
+      url: https://github.com/nicklasfrahm/kraut
