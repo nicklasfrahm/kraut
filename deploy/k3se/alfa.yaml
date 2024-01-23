@@ -21,6 +21,15 @@ cluster:
       - 172.29.0.0/16
     cluster-dns:
       - 172.29.0.10
+    kube-apiserver-arg:
+    # Allow authentication using service accounts from inside the cluster.
+    - service-account-issuer=https://oidc.alfa.nicklasfrahm.dev
+    - service-account-jwks-uri=https://oidc.alfa.nicklasfrahm.dev/openid/v1/jwks
+    - anonymous-auth=true
+    # Allow authentication using users and identities from outside the cluster.
+    - oidc-issuer-url=https://accounts.google.com
+    - oidc-client-id=TBD
+    - oidc-username-claim=email
 
 # A list of all nodes in the cluster and their connection information.
 nodes:
