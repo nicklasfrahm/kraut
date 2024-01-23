@@ -27,7 +27,9 @@ markdown_extensions:
   - toc:
       permalink: true
 nav:
-  - Overview: index.md
+  - Overview:
+      - Overview: index.md
+      - Deployment: overview/deployment.md
   - Management:
       - Overview: management.md
       - SSH: management/ssh.md
