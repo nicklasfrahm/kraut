@@ -33,6 +33,5 @@ public/
 # Ignore sample secrets.
 config/samples/*secret*.yaml
 
-# Ignore chart dependencies and bundled charts.
-charts/**/charts
+# Ignore bundled charts.
 *.tgz
