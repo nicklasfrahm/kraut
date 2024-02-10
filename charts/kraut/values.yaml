@@ -8,7 +8,7 @@ operator:
   # (optional) Configure the operator's image.
   image:
     # (optional) Override this if you have a private registry.
-    repository: "ghcr.io/nicklasfrahm/kraut-controller"
+    repository: "ghcr.io/nicklasfrahm/kraut/operator"
     # (optional) Override this if you want to deploy a different
     # version of the operator. Be aware that this may break the
     # operator due to incompatibility with the CRDs.

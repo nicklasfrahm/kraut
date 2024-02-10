@@ -12,6 +12,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -55,6 +56,8 @@ func main() {
 	}
 
 	config.OutputPaths = []string{"stdout"}
+	config.EncoderConfig.TimeKey = "timestamp"
+	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	logger, _ := config.Build()
 
 	clientSet, err := createKubernetesClientset()

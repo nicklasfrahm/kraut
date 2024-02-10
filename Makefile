@@ -1,9 +1,13 @@
 # VERSION defines the project version for the bundle.
 # Update this value when you upgrade the version of your project.
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
-# - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
-# - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
+# - use the VERSION as arg of the bundle target (e.g `make bundle VERSION=0.0.2`)
+# - use environment variables to overwrite this value (e.g `export VERSION=0.0.2`)
 VERSION ?= $(shell git describe --tags --always --dirty)
+
+# COMPONENT defines the subcomponent of the project that you would like
+# to build. The current options are: operator, oidc-proxy
+COMPONENT ?= operator
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
@@ -24,16 +28,19 @@ BUNDLE_DEFAULT_CHANNEL := --default-channel=$(DEFAULT_CHANNEL)
 endif
 BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 
-# IMAGE_TAG_BASE defines the docker.io namespace and part of the image name for remote images.
+# IMAGE_TAG_BASE defines the ghcr.io namespace and part of the image name for remote images.
 # This variable is used to construct full image tags for bundle and catalog images.
 #
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
-# kraut.nicklasfrahm.dev/kraut-bundle:$VERSION and kraut.nicklasfrahm.dev/kraut-catalog:$VERSION.
+# ghcr.io/nicklasfrahm/kraut/olm-bundle:$VERSION and ghcr.io/nicklasfrahm/kraut/olm-catalog:$VERSION.
 IMAGE_TAG_BASE ?= ghcr.io/nicklasfrahm/kraut
+
+# IMG defines the image and tag used for the components container image.
+IMG = $(IMAGE_TAG_BASE)/$(COMPONENT):$(VERSION)
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
-BUNDLE_IMG ?= $(IMAGE_TAG_BASE)-bundle:$(VERSION)
+BUNDLE_IMG ?= $(IMAGE_TAG_BASE)/olm-bundle:$(VERSION)
 
 # BUNDLE_GEN_FLAGS are the flags passed to the operator-sdk generate bundle command
 BUNDLE_GEN_FLAGS ?= -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
@@ -50,8 +57,6 @@ endif
 # This is useful for CI or a project to utilize a specific version of the operator-sdk toolkit.
 OPERATOR_SDK_VERSION ?= v1.33.0
 
-# Image URL to use all building/pushing image targets
-IMG ?= $(IMAGE_TAG_BASE)-controller:$(VERSION)
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.27.1
 
@@ -61,6 +66,10 @@ GOBIN=$(shell go env GOPATH)/bin
 else
 GOBIN=$(shell go env GOBIN)
 endif
+
+# GOFLAGS define the build flags to be used when building the project.
+# This is useful for CI or a project to utilize a specific set of build flags.
+GOFLAGS ?= -ldflags="-s -w -X main.version=$(VERSION)"
 
 # CONTAINER_TOOL defines the container tool to be used for building images.
 # Be aware that the target commands are only tested with Docker which is
@@ -75,6 +84,10 @@ SHELL = /usr/bin/env bash -o pipefail
 
 .PHONY: all
 all: build
+
+# TODO: Add UPX compression to the build process.
+bin/%: cmd/%/*.go
+	CGO_ENABLED=0 go build $(GOFLAGS) -o $@ $<
 
 ##@ General
 
@@ -119,8 +132,7 @@ test: manifests generate fmt vet envtest ## Run tests.
 ##@ Build
 
 .PHONY: build
-build: manifests generate fmt vet ## Build manager binary.
-	go build -o bin/manager -ldflags "-X main.version=$(VERSION)" ./cmd/main.go
+build: manifests generate fmt vet $(subst cmd,bin,$(shell find cmd/* -type d)) ## Build manager binary.
 
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.
@@ -130,12 +142,15 @@ run: manifests generate fmt vet ## Run a controller from your host.
 # (i.e. docker build --platform linux/arm64 ). However, you must enable docker buildKit for it.
 # More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 .PHONY: docker-build
-docker-build: test ## Build docker image with the manager.
-	$(CONTAINER_TOOL) build -t ${IMG} .
+docker-build: test ## Build docker image with the component.
+	$(CONTAINER_TOOL) build \
+		--build-arg COMPONENT=$(COMPONENT) \
+		--build-arg VERSION=$(VERSION) \
+		--tag $(IMG) .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
-	$(CONTAINER_TOOL) push ${IMG}
+	$(CONTAINER_TOOL) push $(IMG)
 
 # Use a dummy version if we are not on the main branch
 # to avoid issues with invalid semver versions.
