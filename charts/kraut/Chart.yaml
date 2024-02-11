@@ -25,3 +25,17 @@ annotations:
       url: https://kraut.nicklasfrahm.dev
     - name: Source
       url: https://github.com/nicklasfrahm/kraut
+dependencies:
+  # Reference: https://artifacthub.io/packages/helm/cert-manager/cert-manager
+  - name: cert-manager
+    repository: https://charts.jetstack.io
+    version: "1.14.2"
+  # Reference: https://artifacthub.io/packages/helm/envoy-gateway/gateway-helm
+  - name: gateway-helm
+    alias: envoyGateway
+    repository: oci://docker.io/envoyproxy
+    version: "0.6.0"
+  # Reference: file://./charts/oidc-proxy/README.md
+  - name: oidc-proxy
+    alias: oidcProxy
+    version: "0.0.0"
