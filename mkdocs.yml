@@ -37,3 +37,4 @@ nav:
       - Networks: networking/networks.md
   - Development:
       - Quickstart: development/quickstart.md
+      - Architecture: development/architecture.md
