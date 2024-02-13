@@ -1,7 +1,6 @@
 package netutil
 
 import (
-	"fmt"
 	"net"
 	"time"
 )
@@ -25,10 +24,10 @@ const (
 
 // ProbeTCP checks if a port is open on a host by
 // connecting to it with a timeout of 1 second.
-func ProbeTCP(host string, port int) ProbeStatus {
+func ProbeTCP(address string) ProbeStatus {
 	status := ProbeStatusOpen
 
-	if _, err := net.DialTimeout("tcp", net.JoinHostPort(host, fmt.Sprint(port)), time.Second); err != nil {
+	if _, err := net.DialTimeout("tcp", address, time.Second); err != nil {
 		status = ProbeStatusFiltered
 
 		// Check if the error is a I/O timeout error.

@@ -2,6 +2,7 @@ package zone
 
 import (
 	"fmt"
+	"net"
 
 	"github.com/nicklasfrahm/kraut/pkg/netutil"
 	"github.com/nicklasfrahm/kraut/pkg/sshx"
@@ -21,8 +22,8 @@ func Up(host string, zone *Zone) error {
 		return err
 	}
 
-	if netutil.ProbeTCP(host, netutil.PortSSH) != netutil.ProbeStatusOpen {
-		return fmt.Errorf("failed to perform preflight check: port 22/tcp is closed")
+	if status := netutil.ProbeTCP(net.JoinHostPort(host, fmt.Sprint(netutil.PortSSH))); status != netutil.ProbeStatusOpen {
+		return fmt.Errorf("failed to perform preflight check: port %d/tcp is %s", netutil.PortSSH, status)
 	}
 
 	{
