@@ -132,7 +132,7 @@ test: manifests generate fmt vet envtest ## Run tests.
 ##@ Build
 
 .PHONY: build
-build: manifests generate fmt vet $(subst cmd,bin,$(shell find cmd/* -type d)) ## Build manager binary.
+build: manifests generate fmt vet $(subst cmd,bin,$(shell find cmd/* -maxdepth 0 -type d)) ## Build manager binary.
 
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.
