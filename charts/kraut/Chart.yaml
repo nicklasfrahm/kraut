@@ -26,16 +26,24 @@ annotations:
     - name: Source
       url: https://github.com/nicklasfrahm/kraut
 dependencies:
-  # Reference: https://artifacthub.io/packages/helm/cert-manager/cert-manager
-  - name: cert-manager
-    repository: https://charts.jetstack.io
-    version: "1.14.2"
   # Reference: https://artifacthub.io/packages/helm/envoy-gateway/gateway-helm
   - name: gateway-helm
-    alias: envoyGateway
+    alias: envoygateway
     repository: oci://docker.io/envoyproxy
-    version: "0.6.0"
+    version: "v0.6.0"
+    condition: envoygateway.enabled
+  # Reference: https://artifacthub.io/packages/helm/cert-manager/cert-manager
+  - name: cert-manager
+    alias: certmanager
+    repository: https://charts.jetstack.io
+    version: "1.14.2"
+    condition: certmanager.enabled
   # Reference: file://./charts/oidc-proxy/README.md
   - name: oidc-proxy
-    alias: oidcProxy
-    version: "0.0.0"
+    alias: oidcproxy
+    version: "v0.0.0"
+    condition: oidcproxy.enabled
+  # Reference: file://./charts/operator/README.md
+  - name: operator
+    version: "v0.0.0"
+    condition: operator.enabled

@@ -1,51 +1,27 @@
-# (optional) Configure settings that apply to all resources.
+# (required) Configure settings that apply to all resources.
 global:
-  # (optional) Specify an image pull secret if you have a private registry.
-  imagePullSecrets: []
+  # (required) The fully qualified domain name of the cluster.
+  fqdn: "aar1.nicklasfrahm.dev"
 
-# (optional) Configure the operator's deployment.
+# (optional) An OIDC proxy to allow workload identity federation via RFC8693.
+oidcproxy:
+  # (optional) Disable the OIDC proxy if you use a different
+  # solution, such as Entra ID workload identity federation.
+  enabled: false
+
+# (optional) An Envoy Gateway to allow traffic into the cluster.
+envoygateway:
+  # (optional) Disable the Envoy Gateway if you use a different
+  # solution, such as an Ingress Controller.
+  enabled: true
+
+# (optional) A cert-manager to provision trusted certificates via Let's Encrypt.
+certmanager:
+  # (optional) Disable cert-manager if you would like to manage you own
+  # installation.
+  enabled: false
+
+# (optional) Configure the operator.
 operator:
-  # (optional) Configure the operator's image.
-  image:
-    # (optional) Override this if you have a private registry.
-    repository: "ghcr.io/nicklasfrahm/kraut/operator"
-    # (optional) Override this if you want to deploy a different
-    # version of the operator. Be aware that this may break the
-    # operator due to incompatibility with the CRDs.
-    tag: "v0.0.0"
-    # (optional) Avoid potential rate-limiting by default.
-    pullPolicy: IfNotPresent
-  # (optional) Select a specific set of nodes to deploy the operator.
-  nodeSelector: {}
-  # (optional) Tolerations for nodes with taints.
-  tolerations: []
-  # (optional) Prefer to deploy the operator on a specific set of nodes.
-  affinity: {}
-  # (optional) Configure the operator's pod.
-  podAnnotations: {}
-  # (optional) Configure the operator's resources.
-  resources:
-    # (optional) Increase the operator's limits if you are seeing OOMKilled errors.
-    limits:
-      cpu: 200m
-      memory: 256Mi
-    # (optional) Increase the requests if you are seeing slow reconciliations.
-    requests:
-      cpu: 100m
-      memory: 128Mi
-  # (optional) Configure the operator's service account.
-  serviceAccount:
-    # (optional) Disable the creation of a service account.
-    create: true
-    # (optional) Add annotations to the service account.
-    annotations: {}
-    # (optional) Use an existing service account.
-    name: ""
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+  # (optional) Disabling the operator is currently only supported for testing purposes.
+  enabled: false

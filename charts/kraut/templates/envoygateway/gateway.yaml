@@ -1,0 +1,25 @@
+{{- if .Values.envoygateway.enabled -}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ include "kraut.fullname" . }}
+  labels:
+    {{- include "kraut.labels" . | nindent 4 }}
+spec:
+  gatewayClassName: {{ include "kraut.fullname" . }}
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: {{ .Values.global.fqdn }}
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: {{ .Values.global.fqdn | replace "." "-" }}
+            kind: Secret
+            group: core
+            namespace: {{ .Release.Namespace }}
+{{- end }}

@@ -1,0 +1,6 @@
+apiVersion: v2
+type: application
+name: oidc-proxy
+description: An OIDC proxy for Kubernetes to allow workload identity federation via RFC8693.
+version: "0.0.0"
+appVersion: "v0.0.0"

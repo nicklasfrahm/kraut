@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kraut.fullname" . }}-operator
+  name: {{ include "operator.fullname" . }}-operator
   labels:
-    {{- include "kraut.operator.labels" . | nindent 4 }}
+    {{- include "operator.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "kraut.operator.selectorLabels" . | nindent 6 }}
+      {{- include "operator.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.operator.podAnnotations }}
@@ -16,13 +16,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "kraut.operator.selectorLabels" . | nindent 8 }}
+        {{- include "operator.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "kraut.operator.serviceAccountName" . }}
+      serviceAccountName: {{ include "operator.serviceAccountName" . }}
       securityContext:
         runAsNonRoot: true
         readOnlyRootFilesystem: true
@@ -34,11 +34,11 @@ spec:
         # seccompProfile:
         #   type: RuntimeDefault
       containers:
-        - name: manager
-          image: "{{ .Values.operator.image.repository }}:{{ default .Chart.AppVersion .Values.operator.image.tag }}"
-          imagePullPolicy: {{ .Values.operator.image.pullPolicy | quote }}
+        - name: operator
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           command:
-          - /manager
+          - /app
           args:
           - --leader-elect
           securityContext:
@@ -59,16 +59,16 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
           resources:
-            {{- toYaml .Values.operator.resources | nindent 12 }}
-      {{- with .Values.operator.nodeSelector }}
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.operator.affinity }}
+      {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.operator.tolerations }}
+      {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
