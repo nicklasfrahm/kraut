@@ -1,0 +1,15 @@
+dependencies:
+- name: gateway-helm
+  repository: oci://docker.io/envoyproxy
+  version: v0.6.0
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.14.2
+- name: oidc-proxy
+  repository: ""
+  version: v0.0.0
+- name: operator
+  repository: ""
+  version: v0.0.0
+digest: sha256:98bf836034893065495177db1528258c7416e82563e12a86cd516e96719f4649
+generated: "2024-02-12T22:33:34.108125669+01:00"

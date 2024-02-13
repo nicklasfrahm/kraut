@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "kraut.name" -}}
+{{- define "oidc-proxy.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "kraut.fullname" -}}
+{{- define "oidc-proxy.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "kraut.chart" -}}
+{{- define "oidc-proxy.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "kraut.labels" -}}
-helm.sh/chart: {{ include "kraut.chart" . }}
-{{ include "kraut.selectorLabels" . }}
+{{- define "oidc-proxy.labels" -}}
+helm.sh/chart: {{ include "oidc-proxy.chart" . }}
+{{ include "oidc-proxy.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,18 +45,18 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "kraut.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "kraut.name" . }}
+{{- define "oidc-proxy.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "oidc-proxy.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "kraut.operator.serviceAccountName" -}}
-{{- if .Values.operator.serviceAccount.create }}
-{{- default (include "kraut.fullname" .) .Values.operator.serviceAccount.name }}
+{{- define "oidc-proxy.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "oidc-proxy.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.operator.serviceAccount.name }}
+{{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}

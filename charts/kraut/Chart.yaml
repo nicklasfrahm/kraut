@@ -1,7 +1,49 @@
 apiVersion: v2
-name: kraut
-description: kraut is an infrastructure orchestrator built on top of Kubernetes.
-icon: https://openmoji.org/data/color/svg/1F33F.svg
 type: application
+name: kraut
 version: "0.0.0"
 appVersion: "v0.0.0"
+icon: https://openmoji.org/data/color/svg/1F33F.svg
+description: An infrastructure orchestrator using Temporal and Kubernetes.
+keywords:
+  - "kubernetes"
+  - "baremetal"
+  - "orchestration"
+  - "infrastructure"
+home: https://kraut.nicklasfrahm.dev
+sources:
+  - https://github.com/nicklasfrahm/kraut
+maintainers:
+  - name: Nicklas Frahm
+    url: https://github.com/nicklasfrahm
+kubeVersion: ">=1.21.0-0"
+annotations:
+  artifacthub.io/operator: "true"
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://kraut.nicklasfrahm.dev
+    - name: Source
+      url: https://github.com/nicklasfrahm/kraut
+dependencies:
+  # Reference: https://artifacthub.io/packages/helm/envoy-gateway/gateway-helm
+  - name: gateway-helm
+    alias: envoygateway
+    repository: oci://docker.io/envoyproxy
+    version: "v0.6.0"
+    condition: envoygateway.enabled
+  # Reference: https://artifacthub.io/packages/helm/cert-manager/cert-manager
+  - name: cert-manager
+    alias: certmanager
+    repository: https://charts.jetstack.io
+    version: "1.14.2"
+    condition: certmanager.enabled
+  # Reference: file://./charts/oidc-proxy/README.md
+  - name: oidc-proxy
+    alias: oidcproxy
+    version: "v0.0.0"
+    condition: oidcproxy.enabled
+  # Reference: file://./charts/operator/README.md
+  - name: operator
+    version: "v0.0.0"
+    condition: operator.enabled
