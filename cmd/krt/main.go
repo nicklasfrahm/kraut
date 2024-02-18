@@ -5,11 +5,12 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/nicklasfrahm/kraut/cmd/krt/zone"
+	"github.com/nicklasfrahm/kraut/pkg/log"
 )
 
 var version = "dev"
 var help bool
+var logger = log.NewSingletonLogger(log.WithCLI())
 
 var rootCmd = &cobra.Command{
 	Use:   "krt",
@@ -40,7 +41,11 @@ of the infrastructure lifecycle.`,
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&help, "help", "h", false, "Print this help")
-	rootCmd.AddCommand(zone.Command)
+	// TODO: Allow JSON logging.
+	// rootCmd.PersistentFlags().BoolVar(&help, "log-json", false, "Print logs in JSON format")
+
+	rootCmd.AddCommand(zoneCommand)
+	rootCmd.AddCommand(sshCommand)
 }
 
 func main() {

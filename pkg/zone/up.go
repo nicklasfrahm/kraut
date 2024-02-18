@@ -3,12 +3,16 @@ package zone
 import (
 	"fmt"
 
+	"golang.org/x/crypto/ssh"
+
+	"github.com/nicklasfrahm/kraut/pkg/log"
 	"github.com/nicklasfrahm/kraut/pkg/netutil"
 	"github.com/nicklasfrahm/kraut/pkg/sshx"
 )
 
 // Up creates or updates an availability zone.
 func Up(host string, zone *Zone) error {
+	logger := log.NewSingletonLogger()
 	// TODO: Validate args:
 	//       - IP (e.g. 212.112.144.171) [ephemeral, required]
 	//       - hostname (e.g. alfa.nicklasfrahm.dev) [config, required]
@@ -18,33 +22,35 @@ func Up(host string, zone *Zone) error {
 	//       - DNS provider credential [env only, required]
 	//       - user account password for local recovery [env only, optional]
 	if err := zone.Validate(); err != nil {
+		logger.Sugar().Fatalf("failed to validate zone: %s", err)
+	}
+
+	port := netutil.PortSSH
+	if status := netutil.ProbeTCP(host, port); status != netutil.ProbeStatusOpen {
+		logger.Sugar().Fatalf("failed to perform preflight check: port %d/tcp is %s", port, status)
+	}
+
+	// TODO: Continue here.
+	client, err := sshx.NewClient(host,
+		sshx.WithHostKeyCallback(ssh.InsecureIgnoreHostKey()),
+		sshx.WithUserSSHKeys(true),
+	)
+	if err != nil {
 		return err
 	}
+	defer client.Close()
 
-	if status := netutil.ProbeTCP(host, netutil.PortSSH); status != netutil.ProbeStatusOpen {
-		return fmt.Errorf("failed to perform preflight check: port %d/tcp is %s", netutil.PortSSH, status)
+	session, err := client.NewSession()
+	if err != nil {
+		return err
 	}
+	defer session.Close()
 
-	{
-		// TODO: Continue here.
-		client, err := sshx.NewClient(host)
-		if err != nil {
-			return err
-		}
-		defer client.Close()
-
-		session, err := client.NewSession()
-		if err != nil {
-			return err
-		}
-		defer session.Close()
-
-		hostnameBytes, err := session.Output("hostname")
-		if err != nil {
-			return err
-		}
-		fmt.Printf("hostname detected: %s\n", string(hostnameBytes))
+	hostnameBytes, err := session.Output("hostname")
+	if err != nil {
+		return err
 	}
+	fmt.Printf("hostname detected: %s\n", string(hostnameBytes))
 
 	// TODO: Run preflight checks:
 	//       - Open ports: TCP:22,80,443,6443,7443
@@ -66,7 +72,7 @@ func Up(host string, zone *Zone) error {
 	// TODO: Install or upgrade k3s
 	// TODO: Install or upgrade kraut
 
-	fingerprint, err := sshx.GetSSHHostPublicKeyFingerprint(host)
+	fingerprint, err := sshx.ProbeSSHHostPublicKeyFingerprint(host)
 	if err != nil {
 		return err
 	}

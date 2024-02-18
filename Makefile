@@ -9,6 +9,9 @@ VERSION ?= $(shell git describe --tags --always --dirty)
 # to build. The current options are: operator, oidc-proxy
 COMPONENT ?= operator
 
+# SOURCES define the source files used to build the project.
+SOURCES = $(shell find . -type f -name '*.go')
+
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
 # To re-generate a bundle for other specific channels without changing the standard setup, you can:
@@ -82,12 +85,14 @@ CONTAINER_TOOL ?= docker
 SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
+
+
 .PHONY: all
 all: build
 
 # TODO: Add UPX compression to the build process.
-bin/%: cmd/%/*.go
-	CGO_ENABLED=0 go build $(GOFLAGS) -o $@ $<
+bin/$(COMPONENT): $(SOURCES)
+	CGO_ENABLED=0 go build $(GOFLAGS) -o $@ cmd/$(COMPONENT)/*.go
 
 ##@ General
 

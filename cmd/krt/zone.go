@@ -1,4 +1,4 @@
-package zone
+package main
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var Command = &cobra.Command{
+var zoneCommand = &cobra.Command{
 	Use:   "zone",
 	Short: `Manage availability zones`,
 	Long: `Bootstrap new availability zones and manage the
@@ -19,5 +19,5 @@ lifecycle of existing ones.`,
 }
 
 func init() {
-	Command.AddCommand(upCmd)
+	zoneCommand.AddCommand(zoneUpCmd)
 }

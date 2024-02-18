@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/nicklasfrahm/kraut/pkg/log"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -50,15 +50,7 @@ func main() {
 		return
 	}
 
-	config := zap.NewProductionConfig()
-	if version == "dev" {
-		config = zap.NewDevelopmentConfig()
-	}
-
-	config.OutputPaths = []string{"stdout"}
-	config.EncoderConfig.TimeKey = "timestamp"
-	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	logger, _ := config.Build()
+	logger := log.NewLogger()
 
 	clientSet, err := createKubernetesClientset()
 	if err != nil {
