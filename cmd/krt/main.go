@@ -35,8 +35,9 @@ of the infrastructure lifecycle.`,
 		os.Exit(1)
 		return nil
 	},
-	Version:      version,
-	SilenceUsage: true,
+	Version:       version,
+	SilenceUsage:  true,
+	SilenceErrors: true,
 }
 
 func init() {
@@ -50,6 +51,6 @@ func init() {
 
 func main() {
 	if err := rootCmd.Execute(); err != nil {
-		os.Exit(1)
+		logger.Fatal(err.Error())
 	}
 }

@@ -1,6 +1,7 @@
 package zone
 
 import (
+	"context"
 	"fmt"
 
 	"golang.org/x/crypto/ssh"
@@ -25,9 +26,8 @@ func Up(host string, zone *Zone) error {
 		logger.Sugar().Fatalf("failed to validate zone: %s", err)
 	}
 
-	port := netutil.PortSSH
-	if status := netutil.ProbeTCP(host, port); status != netutil.ProbeStatusOpen {
-		logger.Sugar().Fatalf("failed to perform preflight check: port %d/tcp is %s", port, status)
+	if err := PreflightCheckSSH(context.TODO(), host); err != nil {
+		return err
 	}
 
 	// TODO: Continue here.
@@ -78,6 +78,16 @@ func Up(host string, zone *Zone) error {
 	}
 
 	fmt.Printf("fingerprint detected: %s: %s\n", host, fingerprint)
+
+	return nil
+}
+
+// PreflightCheckSSH performs a preflight check for SSH connectivity.
+func PreflightCheckSSH(ctx context.Context, host string) error {
+	port := netutil.PortSSH
+	if status := netutil.ProbeTCP(host, port); status != netutil.ProbeStatusOpen {
+		return fmt.Errorf("failed to perform preflight check: port %d/tcp is %s", port, status)
+	}
 
 	return nil
 }
