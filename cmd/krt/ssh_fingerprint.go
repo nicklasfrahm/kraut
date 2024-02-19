@@ -31,6 +31,9 @@ public key, similar to "SHA256:<hash>".`,
 		}
 		hosts := args
 
+		// TODO: Move this into a function called
+		// `ProbeSSHHostPublicKeyFingerprints` in
+		// the sshx pacakge.
 		var wg sync.WaitGroup
 		fingerprints := make([]string, len(hosts))
 		for i, host := range hosts {

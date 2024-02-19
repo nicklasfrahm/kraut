@@ -125,6 +125,8 @@ func WithDefaultCredentials() Option {
 			return err
 		}
 
+		// TODO: Allow authentication via OpenPubKey / OIDC.
+
 		return nil
 	}
 }

@@ -11,10 +11,21 @@ type ProbeStatus string
 
 const (
 	// ProbeStatusOpen indicates that a port is open.
+	// In nftables terminology, this means that the port is
+	// configured to "accept" packets. This is usually the case
+	// if an application is listening on the port and accepts
+	// connections.
 	ProbeStatusOpen ProbeStatus = "open"
 	// ProbeStatusClosed indicates that a port is closed.
+	// In nftables terminology, this means that the port is
+	// configured to "drop" packets. This is usually the case
+	// if the port is actively blocked by a firewall.
 	ProbeStatusClosed ProbeStatus = "closed"
 	// ProbeStatusFiltered indicates that a port is filtered.
+	// In nftables terminology, this means that the port is
+	// configured to "reject" packets. This is usually the case
+	// if an application is listening on the port, but refuses
+	// to accept connections.
 	ProbeStatusFiltered ProbeStatus = "filtered"
 )
 
