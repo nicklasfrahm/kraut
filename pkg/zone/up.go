@@ -41,6 +41,27 @@ func Up(host string, zone *Zone) error {
 	// TODO: Perform minimal system configuration:
 	//       - Reset user password (if provided)
 
+	// We recommend a subnet of at least 64 IP addresses, so let's consider
+	// the subnet `172.18.0.0/26` for this example. The loopback interface
+	// will be assigned the first IP address of the subnet, because it will
+	// be used as the gateway address for the subnet. So in this case, the
+	// loopback interface will be assigned the IP address `172.18.0.1`.
+
+	logger.Info("Configuring loopback interface")
+	if err := provisioning.ConfigureLoopbackInterface(context.TODO(), host, zone.Router.GatewaySubnet); err != nil {
+		return err
+	}
+
+	logger.Info("Configuring DHCP client")
+	if err := provisioning.ConfigureDHCPClient(context.TODO(), host); err != nil {
+		return err
+	}
+
+	logger.Info("Configuring WAN interface")
+	if err := provisioning.ConfigureWANInterface(context.TODO(), host); err != nil {
+		return err
+	}
+
 	// TODO: Ensure minimal interface configuration:
 	//       - IPv4 on loopback
 	//       - Identify WAN interface and name it WAN

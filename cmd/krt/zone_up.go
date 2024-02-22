@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net"
+
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -49,10 +51,12 @@ working directory.`,
 }
 
 func init() {
+	_, defaultSubnet, _ := net.ParseCIDR("0.0.0.0/0")
+
 	zoneUpCmd.Flags().StringVarP(&zoneUpCmdConfig.Name, "name", "n", "", "name of the zone")
 	zoneUpCmd.Flags().StringVarP(&zoneUpCmdConfig.Domain, "domain", "d", "", "domain that will contain the DNS records for the zone")
 	zoneUpCmd.Flags().StringVarP(&zoneUpCmdConfig.Router.Hostname, "hostname", "H", "", "hostname of the router serving the zone")
-	zoneUpCmd.Flags().IPVarP(&zoneUpCmdConfig.Router.ID, "router-id", "r", nil, "IPv4 address of the router serving the zone")
+	zoneUpCmd.Flags().IPNetVarP(&zoneUpCmdConfig.Router.GatewaySubnet, "gateway-subnet", "g", *defaultSubnet, "IPv4 address of the router serving the zone")
 	zoneUpCmd.Flags().Uint32VarP(&zoneUpCmdConfig.Router.ASN, "asn", "a", 0, "autonomous system number of the zone")
 	zoneUpCmd.Flags().StringVarP(&configFile, "config", "c", "", "path to the configuration file")
 }

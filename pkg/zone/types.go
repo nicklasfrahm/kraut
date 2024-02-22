@@ -12,8 +12,8 @@ var (
 	ErrInvalidHostname = fmt.Errorf("hostname must be lowercase, alphanumeric, and cannot start or end with a hyphen")
 	// ErrRouterConfigRequired is returned when a router configuration is required.
 	ErrRouterConfigRequired = fmt.Errorf("router configuration is required")
-	// ErrRouterIDUnspecified is returned when a router ID is unspecified.
-	ErrRouterIDUnspecified = fmt.Errorf("router ID is unspecified")
+	// ErrGatewaySubnetUnspecified is returned when the gateway subnet is unspecified.
+	ErrGatewaySubnetUnspecified = fmt.Errorf("gateway subnet is unspecified")
 	// ErrASNRequired is returned when an ASN is required.
 	ErrASNRequired = fmt.Errorf("ASN is required")
 	// ErrApexDomainRequired is returned when an apex domain is required.
@@ -26,8 +26,9 @@ var (
 type ZoneRouter struct {
 	// Hostname is the hostname of the router.
 	Hostname string `json:"hostname"`
-	// ID is the IPv4 address of the router.
-	ID net.IP `json:"routerID"`
+	// GatewaySubnet is a subnet defined in CIDR notation that will be used
+	// for the local bridge, but also the address of the loopback interface.
+	GatewaySubnet net.IPNet `json:"gatewaySubnet"`
 	// ASN is the autonomous system number of the router.
 	ASN uint32 `json:"asn"`
 }
@@ -41,8 +42,8 @@ func (r *ZoneRouter) Validate() error {
 		return ErrInvalidHostname
 	}
 
-	if r.ID == nil || r.ID.IsUnspecified() {
-		return ErrRouterIDUnspecified
+	if r.GatewaySubnet.String() == "0.0.0.0/0" {
+		return ErrGatewaySubnetUnspecified
 	}
 
 	if r.ASN == 0 {

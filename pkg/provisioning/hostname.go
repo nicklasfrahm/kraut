@@ -23,18 +23,12 @@ func GetHostname(ctx context.Context, host string) (string, error) {
 	}
 	defer client.Close()
 
-	session, err := client.NewSession()
-	if err != nil {
-		return "", err
-	}
-	defer session.Close()
-
-	hostnameBytes, err := session.Output("hostname")
+	hostnameStdout, _, err := client.RunCommand("hostnamectl hostname")
 	if err != nil {
 		return "", err
 	}
 
-	return strings.TrimSpace(string(hostnameBytes)), nil
+	return strings.TrimSpace(hostnameStdout), nil
 }
 
 // SetHostname sets the hostname of the remote host.
@@ -59,29 +53,23 @@ func SetHostname(ctx context.Context, host, desired string) error {
 	}
 	defer client.Close()
 
-	hostnamectlSession, err := client.NewSession()
-	if err != nil {
-		return err
-	}
-	defer hostnamectlSession.Close()
-
 	hostnamectlCommand := fmt.Sprintf("sudo hostnamectl hostname %s", desired)
-	hostnamectlOutput, err := hostnamectlSession.CombinedOutput(hostnamectlCommand)
+	_, hostnamectlStderr, err := client.RunCommand(hostnamectlCommand)
 	if err != nil {
-		logger.Error("failed to run hostnamectl: " + strings.TrimSpace(string(hostnamectlOutput)))
+		if hostnamectlStderr == "" {
+			return err
+		}
+		logger.Error("failed to run hostnamectl: " + strings.TrimSpace(hostnamectlStderr))
 		return err
 	}
-
-	sedSession, err := client.NewSession()
-	if err != nil {
-		return err
-	}
-	defer sedSession.Close()
 
 	sedCommand := fmt.Sprintf(`sudo sed -i 's/%s/%s/g' /etc/hosts`, current, desired)
-	sedOutput, err := sedSession.CombinedOutput(sedCommand)
+	_, sedStderr, err := client.RunCommand(sedCommand)
 	if err != nil {
-		logger.Error("failed to run sed: " + strings.TrimSpace(string(sedOutput)))
+		if sedStderr == "" {
+			return err
+		}
+		logger.Error("failed to run sed: " + strings.TrimSpace(sedStderr))
 		return err
 	}
 
